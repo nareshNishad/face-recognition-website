@@ -18,6 +18,7 @@ import {
 } from "face-api.js";
 
 import UserRegister from "./user-register";
+import app from "../firebase";
 
 // material-ui components
 import TextField from "material-ui/TextField";
@@ -41,17 +42,19 @@ const style = {
   },
 };
 
-const Register = () => {
+const Register = ({ dispatch }) => {
   const [username, setUserName] = useState("");
   const [video, setVideo] = useState(null);
   const [canvas, setCanvas] = useState(null);
   const [detected, setDetected] = useState(false);
   const [camera, setCamera] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [image, setImage] = useState(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
   useEffect(() => {
+    dispatch(clearDisplayData());
     setVideo(videoRef.current);
     setCanvas(canvasRef.current);
   }, []);
@@ -121,16 +124,34 @@ const Register = () => {
             },
           },
         })
-        .then(
-          (stream) => {
-            video.srcObject = stream;
-            video.play();
-            setCamera(true);
-            resolve();
-          },
-          () => {}
-        );
+        .then((stream) => {
+          video.srcObject = stream;
+          video.play();
+          setCamera(true);
+          resolve();
+        })
+        .catch((err) => alert(err));
     });
+
+  const capture = async () => {
+    if (username.trim() === "") {
+      alert("Username can't be empty");
+    } else {
+      console.log("Working Fine");
+      let canvas = document.querySelector("canvas");
+      let ctx = canvas.getContext("2d");
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      let Image = canvas.toDataURL("image/jpg");
+      setImage(Image);
+
+      dispatch(registerUser({ name: username, img: Image }));
+      // const storageRef = app.storage().ref(username);
+      // var canvas = new Blob([context], { type: "image/png" });
+      // console.log({ canvas });
+      // const fileRef = storageRef.child(username);
+      // fileRef.put(canvas).then(() => console.log("upload sccuess", username));
+    }
+  };
 
   const handleUsername = (e) => {
     setUserName(e.target.value);
@@ -164,11 +185,12 @@ const Register = () => {
                 marginTop: "20px",
               }}
             >
-              <video style={{ position: "fixed" }} ref={videoRef} />
-              <canvas style={{ position: "fixed" }} ref={canvasRef} />
+              <video style={{ position: "absolute" }} ref={videoRef} />
+              <canvas style={{ position: "absolute" }} ref={canvasRef} />
               <br />
             </div>
             <div style={{ marginTop: "250px" }}>
+              <img src={image} />
               <div style={{ margin: "0 auto!important" }}>
                 <TextField
                   hintText="provide identification name"
@@ -189,8 +211,8 @@ const Register = () => {
               <br />
               <RaisedButton
                 className="register-button"
-                // onClick={capture}
-                label="REGISTER"
+                onClick={capture}
+                label={image ? "REGISTER" : "Capture"}
                 primary={true}
                 style={{ margin: 16 }}
               />
@@ -202,6 +224,7 @@ const Register = () => {
                 style={{ margin: 16 }}
               />
             </div>
+
             {/* <UserRegister detect={this.props.regData} /> */}
           </div>
         </Col>
@@ -216,6 +239,4 @@ function mapStateToProps(state) {
   };
 }
 const wait = (time) => new Promise((resolve) => setTimeout(resolve, time));
-export default connect(mapStateToProps, { registerUser, clearDisplayData })(
-  Register
-);
+export default connect(mapStateToProps)(Register);

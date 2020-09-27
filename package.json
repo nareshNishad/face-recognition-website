@@ -5,6 +5,7 @@
   "dependencies": {
     "axios": "^0.17.1",
     "face-api.js": "^0.22.2",
+    "firebase": "^7.21.1",
     "material-ui": "^0.20.0",
     "react": "^16.2.0",
     "react-bootstrap": "^0.32.0",

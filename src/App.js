@@ -28,7 +28,6 @@ const App = () => {
       <AppBar
         className="app-bar"
         title="CAMERIA"
-        onTitleClick={console.log("title click")}
         onLeftIconButtonClick={() => toggleDrawerMenu()}
         zDepth={2}
       />
