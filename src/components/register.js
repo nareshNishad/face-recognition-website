@@ -42,7 +42,7 @@ const style = {
   },
 };
 
-const Register = ({ dispatch }) => {
+const Register = ({ regData, dispatch }) => {
   const [username, setUserName] = useState("");
   const [video, setVideo] = useState(null);
   const [canvas, setCanvas] = useState(null);
@@ -54,9 +54,12 @@ const Register = ({ dispatch }) => {
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    dispatch(clearDisplayData());
+    // dispatch(clearDisplayData());
     setVideo(videoRef.current);
     setCanvas(canvasRef.current);
+    return () => {
+      stopCamera();
+    };
   }, []);
 
   const start = async () => {
@@ -94,7 +97,6 @@ const Register = ({ dispatch }) => {
           const resizedResults = resizeResults(faces, dims);
           if (true) {
             draw.drawDetections(canvas, resizedResults);
-
             draw.drawFaceExpressions(canvas, resizedResults);
           }
         } else {
@@ -132,7 +134,19 @@ const Register = ({ dispatch }) => {
         })
         .catch((err) => alert(err));
     });
-
+  const stopCamera = () => {
+    const video = document.querySelector("video");
+    // A video's MediaStream object is available through its srcObject attribute
+    const mediaStream = video.srcObject;
+    if (mediaStream) {
+      // Through the MediaStream, you can get the MediaStreamTracks with getTracks():
+      const tracks = mediaStream.getTracks();
+      // Tracks are returned as an array, so if you know you only have one, you can stop it with:
+      tracks[0].stop();
+      // Or stop all like so:
+      tracks.forEach((track) => track.stop());
+    }
+  };
   const capture = async () => {
     if (username.trim() === "") {
       alert("Username can't be empty");

@@ -4,7 +4,6 @@ export const CLEAR_DISPLAY = "clear_display";
 
 // function to register user
 export function registerUser(data) {
-  console.log({ data });
   return {
     type: REGISTER_USER,
     payload: data,
