@@ -5,7 +5,7 @@
   "dependencies": {
     "axios": "^0.17.1",
     "face-api.js": "^0.22.2",
-    "firebase": "^7.21.1",
+    "firebase-tools": "^8.11.2",
     "material-ui": "^0.20.0",
     "react": "^16.2.0",
     "react-bootstrap": "^0.32.0",
@@ -14,7 +14,6 @@
     "react-redux": "^5.0.6",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.0.17",
-    "react-webcam": "^5.2.0",
     "redux": "^3.7.2",
     "redux-logger": "^3.0.6",
     "redux-promise": "^0.5.3"

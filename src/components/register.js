@@ -25,8 +25,6 @@ import TextField from "material-ui/TextField";
 import RaisedButton from "material-ui/RaisedButton";
 import RefreshIndicator from "material-ui/RefreshIndicator";
 
-import { config } from "./constant";
-
 // loader styling
 const style = {
   container: {
@@ -75,11 +73,11 @@ const Register = ({ dispatch }) => {
 
     const init = async () => {
       setLoading(true);
-      await loadTinyFaceDetectorModel(`models`);
-      await loadSsdMobilenetv1Model("models");
-      await loadFaceLandmarkModel("models");
-      await loadFaceExpressionModel("models");
-      await loadFaceRecognitionModel("models");
+      await loadTinyFaceDetectorModel("/models");
+      await loadSsdMobilenetv1Model("/models");
+      await loadFaceLandmarkModel("/models");
+      await loadFaceExpressionModel("/models");
+      await loadFaceRecognitionModel("/models");
       ctx = canvas.getContext("2d");
     };
 

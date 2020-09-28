@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import "../styles/register.css";
 
@@ -65,7 +65,6 @@ const Recognize = ({ regData }) => {
     await launchCamera();
     const recognition = makeRecognition();
     await recognition.init();
-
     recognition.start();
   };
 
@@ -99,11 +98,11 @@ const Recognize = ({ regData }) => {
 
     const init = async () => {
       setLoading(true);
-      await loadTinyFaceDetectorModel(`models`);
-      await loadFaceLandmarkTinyModel("models");
-      await loadSsdMobilenetv1Model("models");
-      await loadFaceLandmarkModel("models");
-      await loadFaceRecognitionModel("models");
+      await loadTinyFaceDetectorModel("/models");
+      await loadFaceLandmarkTinyModel("/models");
+      await loadSsdMobilenetv1Model("/models");
+      await loadFaceLandmarkModel("/models");
+      await loadFaceRecognitionModel("/models");
       ctx = canvas.getContext("2d");
     };
 
