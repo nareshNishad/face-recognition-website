@@ -1,4 +1,4 @@
-import { REGISTER_USER, CLEAR_DISPLAY } from "../actions";
+import { REGISTER_USER } from "../actions";
 
 export default (state = [], action) => {
   switch (action.type) {
@@ -12,8 +12,6 @@ export default (state = [], action) => {
       data.faceID = action.payload.img;
       finalData.push(data);
       return finalData;
-    case CLEAR_DISPLAY:
-      return {};
     default:
       return state;
   }

@@ -1,5 +1,5 @@
 // gallery component for displaying the user gallery
-import React, { Component } from "react";
+import React from "react";
 // import closeImg from '../assets/images/close.png';
 import "../styles/register.css";
 import { connect } from "react-redux";
