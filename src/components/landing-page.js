@@ -76,9 +76,11 @@ const LandingPage = () => {
               />
             </CardMedia>
             <CardTitle title="Face Gallery" />
-            <CardText>Deprecated for now due to API call limit</CardText>
+            <CardText></CardText>
             <CardActions>
-              <FlatButton className="flat-btn" label="GALLERY" />
+              <Link to={"/gallery"}>
+                <FlatButton className="flat-btn" label="GALLERY" />
+              </Link>
             </CardActions>
           </Card>
         </Col>

@@ -3,59 +3,49 @@ import React, { Component } from "react";
 // import closeImg from '../assets/images/close.png';
 import "../styles/register.css";
 import { connect } from "react-redux";
-import { fetchGalleryData } from "../actions";
 
 // material-ui components
 import { Grid, Row, Col } from "react-flexbox-grid";
 import { Card } from "material-ui/Card";
+import { Link } from "react-router-dom";
 
-class Gallery extends Component {
-  componentDidMount() {
-    this.props.fetchGalleryData();
-  }
-
+function Gallery({ regData }) {
   // renders the list of user obtained
-  renderList(item) {
-    return (
-      <Col key={item} xs={12} md={12}>
-        <Card className="gallery-card">
-          <p className="gallery-data">
-            <b>Subject ID: </b>
-            {item}
+  return (
+    <Col xs={12} md={12}>
+      {regData.length === 0 ? (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <h3> Empty Gallery </h3>
+          <p>
+            Register person <Link to={"/register"}> Here</Link> and play with
+            applicaton
           </p>
-        </Card>
-      </Col>
-    );
-  }
-
-  render() {
-    if (!this.props.gallery.gallery) {
-      return <div>Loading gallery data...</div>;
-    }
-
-    return (
-      <Grid fluid>
-        <Row>
-          <Col xs={12} md={12} style={{ textAlign: "center" }}>
-            <h3>House of Black and White</h3>
-          </Col>
-        </Row>
-        <Row>
-          {this.props.gallery.gallery.length === 0 ? (
-            <p>No users registered</p>
-          ) : (
-            this.props.gallery.gallery.map((item) => this.renderList(item))
-          )}
-        </Row>
-      </Grid>
-    );
-  }
+        </div>
+      ) : (
+        regData.map((person, i) => (
+          <Card className="gallery-card">
+            <p className="gallery-data">
+              <b>{person.name} </b>
+              <img src={person.faceID} />
+            </p>
+          </Card>
+        ))
+      )}
+    </Col>
+  );
 }
 
 function mapStateToProps(state) {
   return {
-    galleryData: state.galleryData,
+    regData: state.regData,
   };
 }
 
-export default connect(mapStateToProps, { fetchGalleryData })(Gallery);
+export default connect(mapStateToProps)(Gallery);

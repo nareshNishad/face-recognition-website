@@ -16,7 +16,6 @@ import {
   FaceMatcher,
   loadTinyFaceDetectorModel,
   loadFaceLandmarkTinyModel,
-  loadFaceDetectionModel,
   detectAllFaces,
 } from "face-api.js";
 
@@ -27,9 +26,6 @@ import RefreshIndicator from "material-ui/RefreshIndicator";
 import { Grid, Row, Col } from "react-flexbox-grid";
 
 import { connect } from "react-redux";
-import { recognizeUser, clearDisplayData } from "../actions";
-
-import UserRecognize from "./user-recognize";
 
 // loader styling
 const style = {
@@ -46,17 +42,17 @@ const style = {
   },
 };
 
-const Recognize = ({ dispatch, regData }) => {
+const Recognize = ({ regData }) => {
   const [video, setVideo] = useState(null);
   const [canvas, setCanvas] = useState(null);
   const [camera, setCamera] = useState(false);
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState(null);
+  const [person, setPerson] = useState(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    // dispatch(clearDisplayData());
     console.log("reco", regData);
     setVideo(videoRef.current);
     setCanvas(canvasRef.current);
@@ -126,10 +122,10 @@ const Recognize = ({ dispatch, regData }) => {
             draw.drawDetections(canvas, resizedResults);
             console.log({ resizedResults, labelData });
             const maxDescriptorDistance = 0.6;
-            // if (!labelData || labelData.length === 0) {
-            //   alert("No image in Gallery First Register Person");
-            //   return;
-            // }
+            if (labelData.length === 0) {
+              alert("No image in Gallery First Register Person");
+              return;
+            }
 
             if (
               resizeResults.length > 0 &&
@@ -147,11 +143,9 @@ const Recognize = ({ dispatch, regData }) => {
               );
 
               results.forEach((bestMatch, i) => {
-                const box = resizedResults[i].detection.box;
                 const text = bestMatch.toString();
                 console.log({ text });
-                // draw.DrawBox(box, { label: text });
-                // drawBox.draw(canvas, { label: text });
+                setPerson(text);
               });
             }
           }
@@ -203,25 +197,15 @@ const Recognize = ({ dispatch, regData }) => {
       tracks.forEach((track) => track.stop());
     }
   };
-  const capture = async () => {
-    let canvas = document.querySelector("canvas");
-    let ctx = canvas.getContext("2d");
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    let Image = canvas.toDataURL("image/jpg");
-    console.log({ Image });
-    setImage(Image);
-    Image = await fetchImage(Image);
-
-    // let fullFaceDescriptions = await detectSingleFace(
-    //   Image,
-    //   getFaceDetectorOptions()
-    // )
-    //   .withFaceLandmarks()
-    //   .withFaceDescriptor();
-
-    // fullFaceDescriptions = resizeResults(fullFaceDescriptions);
-    // draw.drawDetections(canvas, fullFaceDescriptions);
-  };
+  // const capture = async () => {
+  //   let canvas = document.querySelector("canvas");
+  //   let ctx = canvas.getContext("2d");
+  //   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  //   let Image = canvas.toDataURL("image/jpg");
+  //   console.log({ Image });
+  //   setImage(Image);
+  //   Image = await fetchImage(Image);
+  // };
 
   return (
     <Grid fluid>
@@ -243,13 +227,12 @@ const Recognize = ({ dispatch, regData }) => {
             <div
               style={{
                 display: "flex",
-                justifyContent: "center",
                 marginTop: "20px",
               }}
             >
               <div>
-                <video ref={videoRef} />
-                <canvas ref={canvasRef} />
+                <video style={{ position: "absolute" }} ref={videoRef} />
+                <canvas style={{ position: "absolute" }} ref={canvasRef} />
               </div>
               <br />
             </div>
@@ -264,15 +247,15 @@ const Recognize = ({ dispatch, regData }) => {
             />
             <br />
             <div style={{ marginTop: "250px" }}>
-              <img src={image} />
+              <h3>Detected Person {person}</h3>
+              {/* <img src={image} />
               <RaisedButton
                 onClick={capture}
                 label="DETECT"
                 primary={true}
                 style={{ margin: 16 }}
-              />
+              /> */}
             </div>
-            {/* <UserRecognize detect={props.detData} /> */}
           </div>
         </Col>
       </Row>

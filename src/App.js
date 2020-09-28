@@ -11,6 +11,7 @@ import { Route, Switch, Link } from "react-router-dom";
 import LandingPage from "./components/landing-page";
 import Recognize from "./components/recognize";
 import Register from "./components/register";
+import Gallery from "./components/gallery";
 
 const App = () => {
   const [toggle, setToggle] = useState(false);
@@ -46,12 +47,16 @@ const App = () => {
         <Link to={"/register"} className="link">
           <MenuItem onClick={() => handleClose()}>Register</MenuItem>
         </Link>
+        <Link to={"/gallery"} className="link">
+          <MenuItem onClick={() => handleClose()}>Gallery</MenuItem>
+        </Link>
       </Drawer>
 
       <Switch>
         <Route exact path="/" render={(props) => <LandingPage {...props} />} />
         <Route path="/recognize" render={(props) => <Recognize {...props} />} />
         <Route path="/register" render={(props) => <Register {...props} />} />
+        <Route path="/gallery" render={(props) => <Gallery {...props} />} />
         <Route path="**" render={(props) => <LandingPage {...props} />} />
       </Switch>
     </div>

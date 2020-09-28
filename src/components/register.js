@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import "../styles/register.css";
 
-import axios from "axios";
 import { Grid, Row, Col } from "react-flexbox-grid";
 
 import { connect } from "react-redux";
-import { registerUser, clearDisplayData } from "../actions";
+import { registerUser } from "../actions";
 
 import {
   loadTinyFaceDetectorModel,
@@ -15,10 +14,11 @@ import {
   matchDimensions,
   draw,
   loadFaceExpressionModel,
+  fetchImage,
+  loadSsdMobilenetv1Model,
+  loadFaceLandmarkModel,
+  loadFaceRecognitionModel,
 } from "face-api.js";
-
-import UserRegister from "./user-register";
-import app from "../firebase";
 
 // material-ui components
 import TextField from "material-ui/TextField";
@@ -42,11 +42,10 @@ const style = {
   },
 };
 
-const Register = ({ regData, dispatch }) => {
+const Register = ({ dispatch }) => {
   const [username, setUserName] = useState("");
   const [video, setVideo] = useState(null);
   const [canvas, setCanvas] = useState(null);
-  const [detected, setDetected] = useState(false);
   const [camera, setCamera] = useState(false);
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState(null);
@@ -54,7 +53,6 @@ const Register = ({ regData, dispatch }) => {
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    // dispatch(clearDisplayData());
     setVideo(videoRef.current);
     setCanvas(canvasRef.current);
     return () => {
@@ -78,8 +76,10 @@ const Register = ({ regData, dispatch }) => {
     const init = async () => {
       setLoading(true);
       await loadTinyFaceDetectorModel(`models`);
-
+      await loadSsdMobilenetv1Model("models");
+      await loadFaceLandmarkModel("models");
       await loadFaceExpressionModel("models");
+      await loadFaceRecognitionModel("models");
       ctx = canvas.getContext("2d");
     };
 
@@ -92,7 +92,6 @@ const Register = ({ regData, dispatch }) => {
         ).withFaceExpressions(true);
         setLoading(false);
         if (faces) {
-          setDetected(true);
           const dims = matchDimensions(canvas, video, true);
           const resizedResults = resizeResults(faces, dims);
           if (true) {
@@ -100,7 +99,6 @@ const Register = ({ regData, dispatch }) => {
             draw.drawFaceExpressions(canvas, resizedResults);
           }
         } else {
-          setDetected(false);
           ctx.clearRect(0, 0, video.videoWidth, video.videoHeight);
         }
       }
@@ -147,18 +145,33 @@ const Register = ({ regData, dispatch }) => {
       tracks.forEach((track) => track.stop());
     }
   };
+
   const capture = async () => {
     if (username.trim() === "") {
       alert("Username can't be empty");
     } else {
       console.log("Working Fine");
+      setLoading(true);
       let canvas = document.querySelector("canvas");
       let ctx = canvas.getContext("2d");
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       let Image = canvas.toDataURL("image/jpg");
       setImage(Image);
+      //  check click image contain person
+      const img = await fetchImage(Image);
+      const fullFaceDescription = await detectSingleFace(img)
+        .withFaceLandmarks()
+        .withFaceDescriptor();
+
+      if (!fullFaceDescription) {
+        alert(`no faces detected in clicked image please Register again`);
+        setLoading(false);
+        return;
+      }
 
       dispatch(registerUser({ name: username, img: Image }));
+      console.log("face detected");
+      setLoading(false);
       // const storageRef = app.storage().ref(username);
       // var canvas = new Blob([context], { type: "image/png" });
       // console.log({ canvas });
@@ -172,7 +185,7 @@ const Register = ({ regData, dispatch }) => {
   };
 
   const resetGallery = () => {
-    alert("Reset clicked");
+    setImage(null);
   };
 
   return (
@@ -230,16 +243,16 @@ const Register = ({ regData, dispatch }) => {
                 primary={true}
                 style={{ margin: 16 }}
               />
-              <RaisedButton
-                className="register-button"
-                onClick={resetGallery}
-                label="RESET GALLERY"
-                primary={true}
-                style={{ margin: 16 }}
-              />
+              {image && (
+                <RaisedButton
+                  className="register-button"
+                  onClick={resetGallery}
+                  label="Retake"
+                  primary={true}
+                  style={{ margin: 16 }}
+                />
+              )}
             </div>
-
-            {/* <UserRegister detect={this.props.regData} /> */}
           </div>
         </Col>
       </Row>
