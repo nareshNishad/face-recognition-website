@@ -7,17 +7,12 @@ import { connect } from "react-redux";
 import { registerUser } from "../actions";
 
 import {
-  loadTinyFaceDetectorModel,
   detectSingleFace,
   TinyFaceDetectorOptions,
   resizeResults,
   matchDimensions,
   draw,
-  loadFaceExpressionModel,
   fetchImage,
-  loadSsdMobilenetv1Model,
-  loadFaceLandmarkModel,
-  loadFaceRecognitionModel,
 } from "face-api.js";
 
 // material-ui components
@@ -73,11 +68,6 @@ const Register = ({ dispatch }) => {
 
     const init = async () => {
       setLoading(true);
-      await loadTinyFaceDetectorModel("/models");
-      await loadSsdMobilenetv1Model("/models");
-      await loadFaceLandmarkModel("/models");
-      await loadFaceExpressionModel("/models");
-      await loadFaceRecognitionModel("/models");
       ctx = canvas.getContext("2d");
     };
 
@@ -170,11 +160,6 @@ const Register = ({ dispatch }) => {
       dispatch(registerUser({ name: username, img: Image }));
       console.log("face detected");
       setLoading(false);
-      // const storageRef = app.storage().ref(username);
-      // var canvas = new Blob([context], { type: "image/png" });
-      // console.log({ canvas });
-      // const fileRef = storageRef.child(username);
-      // fileRef.put(canvas).then(() => console.log("upload sccuess", username));
     }
   };
 

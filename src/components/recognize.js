@@ -8,14 +8,9 @@ import {
   resizeResults,
   matchDimensions,
   draw,
-  loadFaceRecognitionModel,
-  loadSsdMobilenetv1Model,
-  loadFaceLandmarkModel,
   fetchImage,
   LabeledFaceDescriptors,
   FaceMatcher,
-  loadTinyFaceDetectorModel,
-  loadFaceLandmarkTinyModel,
   detectAllFaces,
 } from "face-api.js";
 
@@ -47,7 +42,6 @@ const Recognize = ({ regData }) => {
   const [canvas, setCanvas] = useState(null);
   const [camera, setCamera] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [image, setImage] = useState(null);
   const [person, setPerson] = useState(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -98,11 +92,6 @@ const Recognize = ({ regData }) => {
 
     const init = async () => {
       setLoading(true);
-      await loadTinyFaceDetectorModel("/models");
-      await loadFaceLandmarkTinyModel("/models");
-      await loadSsdMobilenetv1Model("/models");
-      await loadFaceLandmarkModel("/models");
-      await loadFaceRecognitionModel("/models");
       ctx = canvas.getContext("2d");
     };
 
@@ -154,7 +143,6 @@ const Recognize = ({ regData }) => {
       }
       start();
     };
-
     return { init, start };
   };
 
@@ -196,15 +184,6 @@ const Recognize = ({ regData }) => {
       tracks.forEach((track) => track.stop());
     }
   };
-  // const capture = async () => {
-  //   let canvas = document.querySelector("canvas");
-  //   let ctx = canvas.getContext("2d");
-  //   ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-  //   let Image = canvas.toDataURL("image/jpg");
-  //   console.log({ Image });
-  //   setImage(Image);
-  //   Image = await fetchImage(Image);
-  // };
 
   return (
     <Grid fluid>
@@ -246,14 +225,7 @@ const Recognize = ({ regData }) => {
             />
             <br />
             <div style={{ marginTop: "250px" }}>
-              <h3>Detected Person {person}</h3>
-              {/* <img src={image} />
-              <RaisedButton
-                onClick={capture}
-                label="DETECT"
-                primary={true}
-                style={{ margin: 16 }}
-              /> */}
+              {person && <h3>Detected Person {person}</h3>}
             </div>
           </div>
         </Col>
