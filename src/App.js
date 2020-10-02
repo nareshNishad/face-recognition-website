@@ -13,6 +13,15 @@ import Recognize from "./components/recognize";
 import Register from "./components/register";
 import Gallery from "./components/gallery";
 
+import {
+  loadFaceRecognitionModel,
+  loadSsdMobilenetv1Model,
+  loadFaceLandmarkModel,
+  loadTinyFaceDetectorModel,
+  loadFaceLandmarkTinyModel,
+  loadFaceExpressionModel,
+} from "face-api.js";
+
 const App = () => {
   const [toggle, setToggle] = useState(false);
 
@@ -23,6 +32,18 @@ const App = () => {
   const handleClose = () => {
     setToggle(false);
   };
+
+  React.useEffect(() => {
+    async function fetchModal() {
+      await loadTinyFaceDetectorModel("/models");
+      await loadFaceLandmarkTinyModel("/models");
+      await loadSsdMobilenetv1Model("/models");
+      await loadFaceLandmarkModel("/models");
+      await loadFaceRecognitionModel("/models");
+      await loadFaceExpressionModel("/models");
+    }
+    fetchModal();
+  }, []);
 
   return (
     <div>

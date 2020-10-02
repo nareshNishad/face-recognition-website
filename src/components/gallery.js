@@ -5,7 +5,7 @@ import "../styles/register.css";
 import { connect } from "react-redux";
 
 // material-ui components
-import { Grid, Row, Col } from "react-flexbox-grid";
+import { Col } from "react-flexbox-grid";
 import { Card } from "material-ui/Card";
 import { Link } from "react-router-dom";
 

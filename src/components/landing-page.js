@@ -19,27 +19,7 @@ import {
 } from "material-ui/Card";
 import FlatButton from "material-ui/FlatButton";
 
-import {
-  loadFaceRecognitionModel,
-  loadSsdMobilenetv1Model,
-  loadFaceLandmarkModel,
-  loadTinyFaceDetectorModel,
-  loadFaceLandmarkTinyModel,
-  loadFaceExpressionModel,
-} from "face-api.js";
-
 const LandingPage = () => {
-  React.useEffect(() => {
-    async function fetchModal() {
-      await loadTinyFaceDetectorModel("/models");
-      await loadFaceLandmarkTinyModel("/models");
-      await loadSsdMobilenetv1Model("/models");
-      await loadFaceLandmarkModel("/models");
-      await loadFaceRecognitionModel("/models");
-      await loadFaceExpressionModel("/models");
-    }
-    fetchModal();
-  }, []);
   return (
     <Grid fluid>
       <Row>
