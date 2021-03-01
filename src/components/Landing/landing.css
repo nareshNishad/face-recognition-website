@@ -1,0 +1,17 @@
+.landing_container {
+  display: flex;
+  flex-direction: column;
+}
+.card_main_container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+.card_container {
+  padding: 10px;
+}
+.content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

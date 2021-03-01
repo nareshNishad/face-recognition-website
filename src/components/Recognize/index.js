@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 
-import "../styles/register.css";
+// import "../styles/register.css";
 
 import {
   detectSingleFace,
@@ -17,8 +17,6 @@ import {
 // material-ui component
 import RaisedButton from "material-ui/RaisedButton";
 import RefreshIndicator from "material-ui/RefreshIndicator";
-
-import { Grid, Row, Col } from "react-flexbox-grid";
 
 import { connect } from "react-redux";
 
@@ -52,14 +50,15 @@ const Recognize = ({ regData }) => {
     setCanvas(canvasRef.current);
     return () => {
       stopCamera();
+      start(true);
     };
   }, []);
 
-  const start = async () => {
+  const start = async (exit) => {
     await launchCamera();
     const recognition = makeRecognition();
     await recognition.init();
-    recognition.start();
+    recognition.start(exit);
   };
 
   const labeledFaceDescriptors = async () =>
@@ -68,7 +67,6 @@ const Recognize = ({ regData }) => {
         // fetch image data from urls and convert blob to HTMLImage element
         const imgUrl = `${label.faceID}`;
         const img = await fetchImage(imgUrl);
-        console.log(`${label.name}`);
         // detect the face with the highest score in the image and compute it's landmarks and face descriptor
         const fullFaceDescription = await detectSingleFace(img)
           .withFaceLandmarks()
@@ -95,8 +93,12 @@ const Recognize = ({ regData }) => {
       ctx = canvas.getContext("2d");
     };
 
-    const start = async () => {
+    const start = async (exit) => {
+      if (exit) {
+        return;
+      }
       await wait(0);
+
       let labelData = await labeledFaceDescriptors();
       if (video.readyState === 4) {
         const faces = await detectAllFaces(video, getFaceDetectorOptions())
@@ -186,9 +188,9 @@ const Recognize = ({ regData }) => {
   };
 
   return (
-    <Grid fluid>
-      <Row>
-        <Col xs={12} md={4} mdOffset={4}>
+    <div>
+      <div>
+        <div>
           <div style={{ textAlign: "center" }}>
             <h3>DETECT FACE</h3>
             {!camera && (
@@ -228,9 +230,9 @@ const Recognize = ({ regData }) => {
               {person && <h3>Detected Person {person}</h3>}
             </div>
           </div>
-        </Col>
-      </Row>
-    </Grid>
+        </div>
+      </div>
+    </div>
   );
 };
 

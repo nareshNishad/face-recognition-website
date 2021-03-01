@@ -1,6 +1,7 @@
 import { REGISTER_USER } from "../actions";
 
 export default (state = [], action) => {
+  console.log("action", action);
   switch (action.type) {
     case REGISTER_USER:
       let finalData = [];

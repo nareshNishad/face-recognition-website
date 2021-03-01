@@ -6,12 +6,12 @@ import AppBar from "material-ui/AppBar";
 import Drawer from "material-ui/Drawer";
 import MenuItem from "material-ui/MenuItem";
 
-import { Route, Switch, Link } from "react-router-dom";
+import { Route, Switch, Link, Redirect } from "react-router-dom";
 
-import LandingPage from "./components/landing-page";
-import Recognize from "./components/recognize";
-import Register from "./components/register";
-import Gallery from "./components/gallery";
+import LandingPage from "./components/Landing";
+import Recognize from "./components/Recognize";
+import Register from "./components/Register";
+import Gallery from "./components/Gallery";
 
 import {
   loadFaceRecognitionModel,
@@ -19,7 +19,6 @@ import {
   loadFaceLandmarkModel,
   loadTinyFaceDetectorModel,
   loadFaceLandmarkTinyModel,
-  loadFaceExpressionModel,
 } from "face-api.js";
 
 const App = () => {
@@ -35,12 +34,13 @@ const App = () => {
 
   React.useEffect(() => {
     async function fetchModal() {
-      await loadTinyFaceDetectorModel("/models");
-      await loadFaceLandmarkTinyModel("/models");
-      await loadSsdMobilenetv1Model("/models");
-      await loadFaceLandmarkModel("/models");
-      await loadFaceRecognitionModel("/models");
-      await loadFaceExpressionModel("/models");
+      Promise.all([
+        loadTinyFaceDetectorModel("/models"),
+        loadFaceLandmarkTinyModel("/models"),
+        loadSsdMobilenetv1Model("/models"),
+        loadFaceLandmarkModel("/models"),
+        loadFaceRecognitionModel("/models"),
+      ]);
     }
     fetchModal();
   }, []);
@@ -74,11 +74,11 @@ const App = () => {
       </Drawer>
 
       <Switch>
-        <Route exact path="/" render={(props) => <LandingPage {...props} />} />
-        <Route path="/recognize" render={(props) => <Recognize {...props} />} />
-        <Route path="/register" render={(props) => <Register {...props} />} />
-        <Route path="/gallery" render={(props) => <Gallery {...props} />} />
-        <Route path="**" render={(props) => <LandingPage {...props} />} />
+        <Route exact path="/" component={LandingPage} />
+        <Route exact path="/recognize" component={Recognize} />
+        <Route exact path="/register" component={Register} />
+        <Route exact path="/gallery" component={Gallery} />
+        <Redirect component={LandingPage} />
       </Switch>
     </div>
   );

@@ -1,18 +1,17 @@
 // gallery component for displaying the user gallery
 import React from "react";
 // import closeImg from '../assets/images/close.png';
-import "../styles/register.css";
+// import "../styles/register.css";
 import { connect } from "react-redux";
 
 // material-ui components
-import { Col } from "react-flexbox-grid";
 import { Card } from "material-ui/Card";
 import { Link } from "react-router-dom";
 
 function Gallery({ regData }) {
   // renders the list of user obtained
   return (
-    <Col xs={12} md={12}>
+    <div>
       {regData.length === 0 ? (
         <div
           style={{
@@ -38,7 +37,7 @@ function Gallery({ regData }) {
           </Card>
         ))
       )}
-    </Col>
+    </div>
   );
 }
 

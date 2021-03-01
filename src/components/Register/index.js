@@ -1,10 +1,8 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
-import "../styles/register.css";
-
-import { Grid, Row, Col } from "react-flexbox-grid";
+import React, { useEffect, useState, useRef } from "react";
+import "./register.css";
 
 import { connect } from "react-redux";
-import { registerUser } from "../actions";
+import { registerUser } from "../../actions";
 
 import {
   detectSingleFace,
@@ -16,7 +14,6 @@ import {
 } from "face-api.js";
 
 // material-ui components
-import TextField from "material-ui/TextField";
 import RaisedButton from "material-ui/RaisedButton";
 import RefreshIndicator from "material-ui/RefreshIndicator";
 
@@ -36,7 +33,6 @@ const style = {
 };
 
 const Register = ({ dispatch }) => {
-  const [username, setUserName] = useState("");
   const [video, setVideo] = useState(null);
   const [canvas, setCanvas] = useState(null);
   const [camera, setCamera] = useState(false);
@@ -44,6 +40,7 @@ const Register = ({ dispatch }) => {
   const [image, setImage] = useState(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+  const username = useRef(null);
 
   useEffect(() => {
     setVideo(videoRef.current);
@@ -74,17 +71,13 @@ const Register = ({ dispatch }) => {
     const start = async () => {
       await wait(0);
       if (video.readyState === 4) {
-        const faces = await detectSingleFace(
-          video,
-          getFaceDetectorOptions()
-        ).withFaceExpressions(true);
+        const faces = await detectSingleFace(video, getFaceDetectorOptions());
         setLoading(false);
         if (faces) {
           const dims = matchDimensions(canvas, video, true);
           const resizedResults = resizeResults(faces, dims);
           if (true) {
             draw.drawDetections(canvas, resizedResults);
-            draw.drawFaceExpressions(canvas, resizedResults);
           }
         } else {
           ctx.clearRect(0, 0, video.videoWidth, video.videoHeight);
@@ -135,10 +128,11 @@ const Register = ({ dispatch }) => {
   };
 
   const capture = async () => {
-    if (username.trim() === "") {
+    console.log(username.current.value);
+    if (username.current.value.trim() === "") {
       alert("Username can't be empty");
+      return;
     } else {
-      console.log("Working Fine");
       setLoading(true);
       let canvas = document.querySelector("canvas");
       let ctx = canvas.getContext("2d");
@@ -157,14 +151,10 @@ const Register = ({ dispatch }) => {
         return;
       }
 
-      dispatch(registerUser({ name: username, img: Image }));
+      dispatch(registerUser({ name: username.current.value, img: Image }));
       console.log("face detected");
       setLoading(false);
     }
-  };
-
-  const handleUsername = (e) => {
-    setUserName(e.target.value);
   };
 
   const resetGallery = () => {
@@ -172,9 +162,9 @@ const Register = ({ dispatch }) => {
   };
 
   return (
-    <Grid fluid>
-      <Row>
-        <Col xs={12} md={4} mdOffset={4}>
+    <div>
+      <div>
+        <div>
           <div style={{ textAlign: "center" }}>
             <h3>REGISTER FACE</h3>
             {!camera && (
@@ -202,10 +192,9 @@ const Register = ({ dispatch }) => {
             <div style={{ marginTop: "250px" }}>
               <img src={image} />
               <div style={{ margin: "0 auto!important" }}>
-                <TextField
-                  hintText="provide identification name"
-                  floatingLabelText="Username"
-                  onChange={(event) => handleUsername(event)}
+                <input
+                  placeholder="provide identification name"
+                  ref={username}
                 />
               </div>
               <br />
@@ -237,9 +226,9 @@ const Register = ({ dispatch }) => {
               )}
             </div>
           </div>
-        </Col>
-      </Row>
-    </Grid>
+        </div>
+      </div>
+    </div>
   );
 };
 
